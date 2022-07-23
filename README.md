@@ -1,0 +1,2 @@
+# stumpwm
+clisp wm
