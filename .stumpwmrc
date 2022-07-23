@@ -1,0 +1,179 @@
+;; -*-lisp-*-
+;;
+;; Here is a sample .stumpwmrc file
+
+;;(in-package :stumpwm)
+(in-package :stumpwm)
+(setf *default-package* :stumpwm)
+
+(set-module-dir "/usr/share/stupmwm/contrib/")
+
+
+(setf *input-window-gravity* :center)
+(setf *message-window-gravity* :center)
+
+
+(set-font "-xos4-terminus-medium-r-normal---18-72-72-c-80-iso8859-15")
+(set-focus-color "#c3cdc8")
+(set-unfocus-color "#1a1a1a")
+
+
+;; ;;; Window Appearance
+(setf *normal-border-width* 1
+      *maxsize-border-width* 2
+      *transient-border-width* 2
+      *window-border-style* :thin
+      *mouse-focus-policy* :click
+      *float-window-border* 1
+      *message-window-y-padding* 8
+      *message-window-x-padding* 8
+      *float-window-title-height* 1)     ; :thick :thin :tight :none
+
+; message
+(set-fg-color "#c3cdc8")
+(set-bg-color "#242424")
+(set-border-color "#c3cdc8")
+(set-msg-border-width 1)
+(set-win-bg-color "#242424")
+
+
+
+(setf *mode-line-border-width* 0)
+(setf *mode-line-background-color* "#242424")
+;;(setf *mode-line-foreground-color* "#2e8b57")
+;;(setf *mode-line-border-color* "green")
+;;(setf *mode-line-position* :top)
+;;(setf *mode-line-frame-position* :top)
+(setf *time-modeline-string* "%F %H:%M")
+(setf *group-format* "%t")
+(setf *window-format* "%n: %30t")
+(setf *dynamic-group-master-split-ratio* 1/2)
+
+
+;; change the prefix key to something else
+;;(set-prefix-key (kbd "F13"))
+;d(run-shell-command "xmodmap -e 'clear mod4'" t)
+;(run-shell-command "xmodmap -e \'keycode 133 = F20\'" t)
+(set-prefix-key (kbd "F13"))
+
+;;-----------------ROOT KEYS--------------------------------------------------------------------------
+
+(define-key *root-map* (kbd "Return") "exec $TERMINAL")
+(define-key *root-map* (kbd "d") "exec dmenu_run -i -c -g 1 -l 10 -p 'Run' -nb '#000000' -sb '#2e8b57' -fn 'JetBrains Mono Nerd Font-12'")
+(define-key *root-map* (kbd "w") "exec brave")
+(define-key *root-map* (kbd "c") "colon")
+(define-key *root-map* (kbd "o") "only")
+
+(define-key *root-map* (kbd "Up") "move-focus up")
+(define-key *root-map* (kbd "Down") "move-focus down")
+(define-key *root-map* (kbd "Left") "move-focus left")
+(define-key *root-map* (kbd "Right") "move-focus right")
+
+(define-key *top-map* (kbd "s-w") "exec brave")
+(define-key *root-map* (kbd "E") "exec subl")
+(define-key *top-map* (kbd "s-d") "exec dmenu_run -i -c -g 1 -l 10 -p 'Run' -nb '#000000' -sb '#2e8b57' -fn 'JetBrains Mono Nerd Font-12'")
+(define-key *top-map* (kbd "s-c") "colon")
+
+(define-key *root-map* (kbd "X") "exec logout.sh")
+(define-key *root-map* (kbd "r") "remove-split")
+(define-key *root-map* (kbd "q") "delete")
+(define-key *root-map* (kbd "Q") "remove")
+
+(define-key *root-map* (kbd "W") "windowlist")
+(define-key *root-map* (kbd "Escape") "restart-soft")
+(define-key *root-map* (kbd "v") "hsplit")
+(define-key *root-map* (kbd "h") "vsplit")
+
+(define-key *top-map* (kbd "M-Up") "move-window up")
+(define-key *top-map* (kbd "M-Down") "move-window down")
+(define-key *top-map* (kbd "M-Left") "move-window left")
+(define-key *top-map* (kbd "M-Right") "move-window right")
+
+;; General Top Level Bindings
+(define-key *top-map* (kbd "M-TAB") "pull-hidden-next")
+(define-key *root-map* (kbd "p") "pull-hidden-previous")
+(define-key *root-map* (kbd "TAB") "fnext")
+;;(define-key *top-map* (kbd "p") "fprev")
+
+
+;; font configuration
+;;(load-module "ttf-fonts")
+;;(set-font (make-instance 'xft:font :family "JetBrains" :subfamily "Medium" :size 12))
+(enable-mode-line (current-screen) (current-head) t)
+
+;;---------------------------------------------------------------------------
+
+(defvar *ce/workspaces* (list "web" "chat" "edit" "music" "video" "steam"))
+(stumpwm:grename (nth 0 *ce/workspaces*))
+(dolist (workspace (cdr *ce/workspaces*))
+  (stumpwm:gnewbg workspace))
+
+
+;; creating or rename groups
+;;(setf (group-name (first (screen-groups (current-screen)))) "web")
+;;(gnewbg "chat")
+;;(gnewbg "edit")
+;;(gnewbg "music")
+;;(gnewbg "video")
+;;(gnewbg "steam")
+
+
+;;; bind keys for changing workspace
+; (define-key *root-map* (kbd "1") "change-workspace web")
+; (define-key *root-map* (kbd "2") "change-workspace chat")
+; (define-key *root-map* (kbd "3") "change-workspace edit")
+; (define-key *root-map* (kbd "4") "change-workspace music")
+; (define-key *root-map* (kbd "5") "change-workspace video")
+; (define-key *root-map* (kbd "6") "change-workspace steam")
+
+;; bind keys for moving the current window to another workspace
+(define-key *root-map* (kbd "M-1") "gmove-and-follow web")
+(define-key *root-map* (kbd "M-2") "gmove-and-follow chat")
+(define-key *root-map* (kbd "M-3") "gmove-and-follow edit")
+(define-key *root-map* (kbd "M-4") "gmove-and-follow music")
+(define-key *root-map* (kbd "M-5") "gmove-and-follow video")
+(define-key *root-map* (kbd "M-6") "gmove-and-follow steam")
+
+;; switch workspace with a message
+(defcommand change-workspace (n)
+  ((:string n))
+  "Switch workspace"
+  (run-commands (concatenate 'string "gselect " n))
+  (echo (concatenate 'string "Switched to " n)))
+;; toggle window floating
+(defcommand toggle-float ()
+  ()
+  "Toggle weather window is floating or not"
+  (if (typep (current-window) 'STUMPWM::FLOAT-WINDOW)
+      (unfloat-this)
+      (float-this)))
+;; and the key for it
+(define-key *root-map* (kbd "t") "toggle-float")
+
+
+;;; Splits
+(defcommand hsplit-and-focus () ()
+  "create a new frame on the right and focus it."
+  (hsplit)
+  (move-focus :right))
+
+(defcommand vsplit-and-focus () ()
+  "create a new frame below and focus it."
+  (vsplit)
+  (move-focus :down))
+(define-key *root-map* (kbd "v") "hsplit-and-focus")
+(define-key *root-map* (kbd "h") "vsplit-and-focus")
+(loop :for i :in '("hsplit-and-focus"
+                 "vsplit-and-focus")
+      :do (dyn-blacklist-command i))
+
+
+;; Gaps
+; (load-module "swm-gaps")
+; (setf swm-gaps:*inner-gaps-size* 5
+;       swm-gaps:*outer-gaps-size* 10
+;       swm-gaps:*head-gaps-size* 0)
+; (when *initializing*
+;   (swm-gaps:toggle-gaps))
+
+(setf (getenv "GDK_CORE_DEVICE_EVENTS") "1")
